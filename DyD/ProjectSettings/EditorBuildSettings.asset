@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Batalla.unity
+    guid: 01ec8757d44e1ce4e9fe19c7f6c4b5d4
+  - enabled: 1
+    path: Assets/Scenes/Batalla Final.unity
+    guid: ff6ed335fadd74548b54ba1da44c237b
+  - enabled: 1
+    path: Assets/Scenes/Cartas.unity
+    guid: c55322c87b080d44598f9a7d945e0a46
+  - enabled: 1
+    path: Assets/Scenes/ComoJugar.unity
+    guid: 4fe634ee9391ebc43b3265d5150406de
+  - enabled: 1
+    path: Assets/Scenes/Conocenos.unity
+    guid: a6e7514364e4f98468e37712fd698975
+  - enabled: 1
+    path: "Assets/Scenes/Crear Campan\u0303a.unity"
+    guid: e9de802e418777a409bcb4e1bbb041c6
+  - enabled: 1
+    path: Assets/Scenes/Fin.unity
+    guid: e964e9cad3c17454498aa385e42b1239
+  - enabled: 1
+    path: Assets/Scenes/Ganaste.unity
+    guid: 7a1eafc88ddeabe459b42e5e837fa2b0
+  - enabled: 1
+    path: Assets/Scenes/IniciarSesion.unity
+    guid: 6f56b2369fe347e4d853ffedd6133551
+  - enabled: 1
+    path: Assets/Scenes/Mapa.unity
+    guid: 9bb6aded97768c1498740e7aa3f42b4d
+  - enabled: 1
+    path: Assets/Scenes/MenuPrincipal.unity
+    guid: 854d87f6e363d65439ab86f6e3a46d60
+  - enabled: 1
+    path: Assets/Scenes/Navegacion.unity
+    guid: 7b92c7704975d7e418aa4f144f166ea5
+  - enabled: 1
+    path: Assets/Scenes/Opciones.unity
+    guid: b78237e1af8df5f448b495ae06e030b5
+  - enabled: 1
+    path: Assets/Scenes/Perdiste.unity
+    guid: 04b7ecf142b201148a92cb4cf0c0f6a8
+  - enabled: 1
+    path: Assets/Scenes/Puntaje.unity
+    guid: e66f937b91853b04cbc009aba09b53d1
+  - enabled: 0
+    path: Assets/Scenes/SampleScene.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Seleccionar Rol.unity
+    guid: d2eac18c0344b994b9fbe07076a759d7
+  - enabled: 1
+    path: Assets/Scenes/Unirse.unity
+    guid: acb2f60fcc4615145b99c3c6a8edee37
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
+  m_UseUCBPForAssetBundles: 0
