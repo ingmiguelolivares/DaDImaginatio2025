@@ -974,6 +974,7 @@
 "Assets/Photon/PhotonUnityNetworking/UtilityScripts/UI/TabViewManager.cs"
 "Assets/Photon/PhotonUnityNetworking/UtilityScripts/UI/TextButtonTransition.cs"
 "Assets/Photon/PhotonUnityNetworking/UtilityScripts/UI/TextToggleIsOnTransition.cs"
+"Assets/Scripts/ejemplocodigo.cs"
 "Assets/Scripts/EventManager.cs"
 "Assets/Scripts/EventPointer.cs"
 "Assets/Scripts/EventUIManager.cs"
