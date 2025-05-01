@@ -1,0 +1,23 @@
+# ninja log v5
+99	17022	7677666439852208	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	cfee30c7a3f9ac9
+194	1146	7677666281194431	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	588610963006f382
+1147	1651	7677666286260403	C:/Users/Carlo/Documents/GitHub/DaDImaginatio2025/DyD/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/4a67143m/obj/arm64-v8a/libswappywrapper.so	4c7e0b1156501995
+146	16650	7677666435468523	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	dedc9747b94ba51d
+129	16645	7677666435580792	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	da045285c39cb256
+182	16710	7677666436708209	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	9df346cb3dd42431
+59	16584	7677666435397902	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	898f2ef1ae041691
+160	16662	7677666436257219	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	d4f1a49a8fe3aa2b
+84	16715	7677666436723466	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	d5bfdeb55aa79d2c
+171	16949	7677666439248124	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	e008128f59a6e554
+17023	17398	7677666443704844	C:/Users/Carlo/Documents/GitHub/DaDImaginatio2025/DyD/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/4a67143m/obj/arm64-v8a/libgame.so	4d2929e193b2ab5
+192	1074	7677670381240663	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	588610963006f382
+1075	1335	7677670383900481	C:/Users/Carlo/Documents/GitHub/DaDImaginatio2025/DyD/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/4a67143m/obj/arm64-v8a/libswappywrapper.so	4c7e0b1156501995
+150	9488	7677670465264978	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	dedc9747b94ba51d
+78	9514	7677670465442819	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	da045285c39cb256
+55	9519	7677670465504194	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	898f2ef1ae041691
+161	9552	7677670465824764	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	d4f1a49a8fe3aa2b
+177	9596	7677670466356130	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	9df346cb3dd42431
+91	9607	7677670466442245	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	d5bfdeb55aa79d2c
+137	9826	7677670468705856	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	e008128f59a6e554
+126	9904	7677670469499642	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	cfee30c7a3f9ac9
+9905	10127	7677670471764215	C:/Users/Carlo/Documents/GitHub/DaDImaginatio2025/DyD/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/4a67143m/obj/arm64-v8a/libgame.so	4d2929e193b2ab5
