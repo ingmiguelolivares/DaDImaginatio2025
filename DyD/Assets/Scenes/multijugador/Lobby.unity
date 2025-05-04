@@ -406,6 +406,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a052daf8073cd784ba87001d8f27f67b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  listoParaUnirse: 0
 --- !u!4 &611915363
 Transform:
   m_ObjectHideFlags: 0
@@ -1436,7 +1437,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1936806562}
         m_TargetAssemblyTypeName: LobbyManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: StartMultiplayerGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

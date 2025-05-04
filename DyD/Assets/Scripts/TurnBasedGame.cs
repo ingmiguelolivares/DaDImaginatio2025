@@ -2,14 +2,19 @@
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class TurnBasedGame : MonoBehaviourPunCallbacks
 {
     public static TurnBasedGame Instance;
 
-    public Text turnText, consoleText;
+    public Text turnText;
+    public Text consoleText;
+    public TMP_Text questionLogText; // solo se asigna en FinalBoss
+
     public Button attackButton, defendButton;
 
     private List<Player> players = new List<Player>();
@@ -18,8 +23,8 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
     private int enemyHealth = 200;
     private string currentEnemyType = "Terrestre";
 
-    private Dictionary<int, int> playerHealths = new Dictionary<int, int>();
-    private Dictionary<int, string> playerClasses = new Dictionary<int, string>();
+    private Dictionary<int, int> playerHealths = new();
+    private Dictionary<int, string> playerClasses = new();
 
     void Awake()
     {
@@ -54,76 +59,53 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(2.0f);
         players.AddRange(PhotonNetwork.PlayerList);
 
-        if (players.Count == 0)
+        foreach (var p in players)
         {
-            LogMessage("⚠ No se encontraron jugadores en la sala.");
-            yield break;
-        }
+            if (string.IsNullOrEmpty(p.NickName))
+                p.NickName = $"Jugador_{p.ActorNumber}";
 
-        LogMessage($"🔹 Se detectaron {players.Count} jugadores.");
+            AssignPlayerClass(p);
+            playerHealths[p.ActorNumber] = GetPlayerHealth(playerClasses[p.ActorNumber]);
 
-        foreach (Player player in players)
-        {
-            if (string.IsNullOrEmpty(player.NickName))
-            {
-                player.NickName = $"Jugador_{player.ActorNumber}";
-            }
-
-            AssignPlayerClass(player);
-            playerHealths[player.ActorNumber] = GetPlayerHealth(playerClasses[player.ActorNumber]);
-            LogMessage($"✅ {player.NickName} es un {playerClasses[player.ActorNumber]} con {playerHealths[player.ActorNumber]} HP.");
+            LogMessage($"✅ {p.NickName} es un {playerClasses[p.ActorNumber]} con {playerHealths[p.ActorNumber]} HP.");
         }
 
         if (PhotonNetwork.IsMasterClient)
-        {
             ChooseRandomStartingPlayer();
-        }
-    }
-
-    void ChooseRandomStartingPlayer()
-    {
-        if (players.Count == 0)
-        {
-            LogMessage("⚠ No hay jugadores para iniciar el turno.");
-            return;
-        }
-
-        currentTurnIndex = Random.Range(0, players.Count);
-        photonView.RPC("SyncTurn", RpcTarget.AllBuffered, currentTurnIndex);
     }
 
     void AssignPlayerClass(Player player)
     {
-        int index = players.IndexOf(player);
-        switch (index)
+        int i = players.IndexOf(player);
+        playerClasses[player.ActorNumber] = i switch
         {
-            case 0: playerClasses[player.ActorNumber] = "Guerrero"; break;
-            case 1: playerClasses[player.ActorNumber] = "Arquero"; break;
-            case 2: playerClasses[player.ActorNumber] = "Mago"; break;
-            default: playerClasses[player.ActorNumber] = "Desconocido"; break;
-        }
+            0 => "Guerrero",
+            1 => "Arquero",
+            2 => "Mago",
+            _ => "Desconocido"
+        };
     }
 
-    int GetPlayerHealth(string playerClass)
+    int GetPlayerHealth(string playerClass) => playerClass switch
     {
-        switch (playerClass)
-        {
-            case "Guerrero": return 250;
-            case "Arquero": return 200;
-            case "Mago": return 100;
-            default: return 100;
-        }
-    }
+        "Guerrero" => 250,
+        "Arquero" => 200,
+        "Mago" => 100,
+        _ => 100
+    };
 
-    int GetPlayerDamage(string playerClass)
+    int GetPlayerDamage(string playerClass) => playerClass switch
     {
-        switch (playerClass)
-        {
-            case "Guerrero": return 6;
-            case "Arquero": return 10;
-            case "Mago": return 15;
-            default: return 5;
-        }
+        "Guerrero" => 6,
+        "Arquero" => 10,
+        "Mago" => 15,
+        _ => 5
+    };
+
+    void ChooseRandomStartingPlayer()
+    {
+        currentTurnIndex = Random.Range(0, players.Count);
+        photonView.RPC("SyncTurn", RpcTarget.AllBuffered, currentTurnIndex);
     }
 
     [PunRPC]
@@ -135,79 +117,71 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 
     void StartTurn()
     {
-        if (players.Count == 0)
-        {
-            LogMessage("⚠ No hay jugadores en la lista.");
-            return;
+        if (players.Count == 0) return;
+        if (currentTurnIndex >= players.Count) currentTurnIndex = 0;
+
+        var currentPlayer = players[currentTurnIndex];
+        turnText.text = $"Turno de: {currentPlayer.NickName}";
+
+        string msg = $"🌀 Turno de {currentPlayer.NickName}\nDragón: {enemyHealth} HP\n❤️ {GetPlayersHealth()}";
+        LogMessage(msg);
+
+        if (SceneManager.GetActiveScene().name == "FinalBoss" && questionLogText != null) {
+            questionLogText.text = "Preparando las preguntas";
         }
-
-        if (currentTurnIndex >= players.Count)
+         // Si estamos en FinalBoss, iniciar la fase de preguntas
+        if (SceneManager.GetActiveScene().name == "FinalBoss")
         {
-            LogMessage("⚠ Índice de turno fuera de rango, reiniciando.");
-            currentTurnIndex = 0;
+            var sphinx = FindObjectOfType<SphinxQuestionManager>();
+            if (sphinx != null)
+            {
+                sphinx.StartQuestionPhase(currentPlayer.ActorNumber);
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ No se encontró el SphinxQuestionManager en escena.");
+            }
         }
-
-        Player currentTurnPlayer = players[currentTurnIndex];
-
-        if (currentTurnPlayer == null)
-        {
-            LogMessage("⚠ Error: Jugador actual es `null`, intentando recuperar...");
-            ChooseRandomStartingPlayer();
-            return;
-        }
-
-        turnText.text = $"Turno de: {currentTurnPlayer.NickName}";
-        LogMessage($"🌀 Turno asignado a: {currentTurnPlayer.NickName}\n💀 Vida del Dragón: {enemyHealth} HP\n❤️ Vida de los jugadores:\n{GetPlayersHealth()}");
+   
     }
 
-    public void Attack()
+    public void ResolveAnswer(int actorNumber, bool success)
     {
-        PerformAction("Atacar");
+        if (!success) AdvanceTurn();
     }
 
-    public void Defend()
-    {
-        PerformAction("Defender");
-    }
+    void AdvanceTurn() => photonView.RPC("NextTurn", RpcTarget.AllBuffered);
+
+    public void Attack() => PerformAction("Atacar");
+    public void Defend() => PerformAction("Defender");
 
     void PerformAction(string action)
     {
-        if (players.Count == 0) return;
+        var currentPlayer = players[currentTurnIndex];
 
-        Player currentTurnPlayer = players[currentTurnIndex];
-
-        if (currentTurnPlayer == null || !playerHealths.ContainsKey(currentTurnPlayer.ActorNumber)) return;
-
-        // ❌ Jugadores muertos no actúan
-        if (playerHealths[currentTurnPlayer.ActorNumber] <= 0)
+        if (playerHealths[currentPlayer.ActorNumber] <= 0)
         {
-            LogMessage($"💀 {currentTurnPlayer.NickName} está muerto y no puede actuar.");
-            photonView.RPC("NextTurn", RpcTarget.AllBuffered);
+            LogMessage($"💀 {currentPlayer.NickName} está muerto.");
+            AdvanceTurn();
             return;
         }
 
-        if (PhotonNetwork.LocalPlayer == currentTurnPlayer)
+        if (PhotonNetwork.LocalPlayer != currentPlayer) return;
+
+        if (action == "Atacar")
         {
-            if (action == "Atacar")
-            {
-                int damage = GetPlayerDamage(playerClasses[currentTurnPlayer.ActorNumber]);
-                LogMessage($"⚔ {currentTurnPlayer.NickName} ataca al dragón y causa {damage} de daño.");
-                photonView.RPC("ApplyDamageToEnemy", RpcTarget.AllBuffered, damage);
-                photonView.RPC("NextTurn", RpcTarget.AllBuffered);
-            }
-            else if (action == "Defender")
-            {
-                LogMessage($"🛡 {currentTurnPlayer.NickName} se defiende.");
-                photonView.RPC("EnemyAttacksNextPlayer", RpcTarget.AllBuffered);
-                photonView.RPC("NextTurn", RpcTarget.AllBuffered);
-            }
+            int dmg = GetPlayerDamage(playerClasses[currentPlayer.ActorNumber]);
+            LogMessage($"⚔ {currentPlayer.NickName} ataca al dragón y causa {dmg} de daño.");
+            photonView.RPC("ApplyDamageToEnemy", RpcTarget.AllBuffered, dmg);
         }
         else
         {
-            LogMessage($"⚠ No es el turno de {PhotonNetwork.LocalPlayer.NickName}.");
+            LogMessage($"🛡 {currentPlayer.NickName} se defiende.");
+            photonView.RPC("EnemyAttacksNextPlayer", RpcTarget.AllBuffered);
         }
-    }
 
+        AdvanceTurn();
+    }
 
     [PunRPC]
     void ApplyDamageToEnemy(int damage)
@@ -215,80 +189,58 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
         enemyHealth -= damage;
         if (enemyHealth < 0) enemyHealth = 0;
 
-        LogMessage($"💥 El enemigo ({currentEnemyType}) recibió {damage} de daño. HP restante: {enemyHealth}");
+        LogMessage($"💥 El enemigo recibió {damage} de daño. HP restante: {enemyHealth}");
 
         if (enemyHealth <= 0)
         {
-            LogMessage("🎉 ¡El dragón ha sido derrotado! 🎉 Fin del juego.");
+            LogMessage("🎉 ¡El dragón ha sido derrotado!");
             attackButton.interactable = false;
             defendButton.interactable = false;
         }
     }
 
     [PunRPC]
-    void UpdateDragonHP(int updatedHP)
-    {
-        enemyHealth = updatedHP;
-        LogMessage($"💥 El enemigo ({currentEnemyType}) ahora tiene {enemyHealth} HP restante.");
-    }
-
-    [PunRPC]
     void EnemyAttacksNextPlayer()
     {
-        if (players.Count == 0) return;
+        int next = (currentTurnIndex + 1) % players.Count;
+        int actor = players[next].ActorNumber;
 
-        int nextPlayerIndex = (currentTurnIndex + 1) % players.Count;
-        int nextActorNumber = players[nextPlayerIndex].ActorNumber;
-
-        if (!playerHealths.ContainsKey(nextActorNumber)) return;
-
-        if (playerHealths[nextActorNumber] <= 0)
+        if (!playerHealths.ContainsKey(actor) || playerHealths[actor] <= 0)
         {
-            LogMessage($"⚠ {players[nextPlayerIndex].NickName} ya está muerto. El dragón no ataca.");
+            LogMessage($"⚠ {players[next].NickName} ya está muerto.");
             return;
         }
 
-        int damage = 30;
-        playerHealths[nextActorNumber] -= damage;
-        if (playerHealths[nextActorNumber] < 0) playerHealths[nextActorNumber] = 0;
+        playerHealths[actor] -= 30;
+        if (playerHealths[actor] < 0) playerHealths[actor] = 0;
 
-        LogMessage($"🐉 El dragón ataca a {players[nextPlayerIndex].NickName} y le causa {damage} de daño. \n❤️ {GetPlayersHealth()}");
+        LogMessage($"🐉 El dragón ataca a {players[next].NickName} y le causa 30 de daño.\n❤️ {GetPlayersHealth()}");
 
-        if (playerHealths[nextActorNumber] <= 0)
-        {
-            LogMessage($"💀 {players[nextPlayerIndex].NickName} ha sido derrotado.");
-        }
+        if (playerHealths[actor] <= 0)
+            LogMessage($"💀 {players[next].NickName} ha sido derrotado.");
     }
-
 
     [PunRPC]
     void NextTurn()
     {
-        if (players.Count == 0) return;
-
         currentTurnIndex = (currentTurnIndex + 1) % players.Count;
         photonView.RPC("SyncTurn", RpcTarget.AllBuffered, currentTurnIndex);
     }
 
     string GetPlayersHealth()
     {
-        string healthInfo = "";
-        foreach (var player in players)
-        {
-            if (playerHealths.ContainsKey(player.ActorNumber))
-            {
-                healthInfo += $"{player.NickName}: {playerHealths[player.ActorNumber]} HP\n";
-            }
-        }
-        return healthInfo;
+        string result = "";
+        foreach (var p in players)
+            result += $"{p.NickName}: {playerHealths[p.ActorNumber]} HP\n";
+        return result;
     }
 
-    void LogMessage(string message)
+    void LogMessage(string msg)
     {
-        Debug.Log(message);
-        if (consoleText != null)
-        {
-            consoleText.text = message;
-        }
+        Debug.Log(msg);
+        if (consoleText != null) consoleText.text = msg;
+
+        if (SceneManager.GetActiveScene().name == "FinalBoss" && questionLogText != null)
+            questionLogText.text = msg;
     }
 }

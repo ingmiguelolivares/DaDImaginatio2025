@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 764029a89a9136241b7b0d30bdfd16fc, type: 3}
+  m_Name: SphinxQuestionBank
+  m_EditorClassIdentifier: Assembly-CSharp::SphinxQuestionBank
+  questions:
+  - question: 1
+    answer: 1
+  - question: 2
+    answer: 0
+  - question: 3
+    answer: 1
+  - question: 4
+    answer: 0
+  - question: 5
+    answer: 1
+  - question: 6
+    answer: 0
+  - question: 7
+    answer: 1
+  - question: 8
+    answer: 0
+  - question: 9
+    answer: 1
+  - question: 10
+    answer: 0
+  - question: 11
+    answer: 1
+  - question: 12
+    answer: 0
+  - question: 13
+    answer: 1
+  - question: 14
+    answer: 0
+  - question: 15
+    answer: 1
+  - question: 16
+    answer: 0
+  - question: 17
+    answer: 1
+  - question: 18
+    answer: 0
+  - question: 19
+    answer: 1
+  - question: 20
+    answer: 0
+  - question: 21
+    answer: 1
+  - question: 22
+    answer: 0
+  - question: 23
+    answer: 1
+  - question: 24
+    answer: 0
+  - question: 25
+    answer: 1

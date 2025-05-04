@@ -6,7 +6,9 @@ using System.Collections.Generic;
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
     public static NetworkManager Instance;
+
     public Dictionary<int, string> playerNames = new Dictionary<int, string>();
+    public bool listoParaUnirse = false;
 
     void Awake()
     {
@@ -21,10 +23,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        // Verificar si el GameObject tiene un PhotonView, si no, mostrar un error
         if (GetComponent<PhotonView>() == null)
         {
-            Debug.LogError("❌ No hay un PhotonView en NetworkManager. Asegúrate de agregarlo manualmente en Unity.");
+            Debug.LogError("❌ No hay un PhotonView en NetworkManager. Asegúrate de agregar uno manualmente en Unity.");
         }
     }
 
@@ -33,42 +34,74 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         if (!PhotonNetwork.IsConnected)
         {
             Debug.Log("🔄 Conectando a Photon...");
-            //PhotonNetwork.ConnectUsingSettings();
+
+            // ✅ Forzar región US (elimina DevRegion, ya no existe)
+            PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "us";
+
+            // ✅ Conectar usando configuración actual
+            PhotonNetwork.ConnectUsingSettings();
+
+            // ✅ Activar logs detallados de red (opcional)
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.DebugOut = ExitGames.Client.Photon.DebugLevel.ALL;
         }
+
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     public override void OnConnectedToMaster()
     {
         Debug.Log("✅ Conectado a Photon Master Server.");
-        //PhotonNetwork.JoinLobby();
+        PhotonNetwork.JoinLobby();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("✅ Conectado al lobby de Photon.");
-        PhotonNetwork.JoinOrCreateRoom("SalaMultijugador", new RoomOptions { MaxPlayers = 3 }, TypedLobby.Default);
+        Debug.Log("🎮 En el Lobby de Photon. Listo para crear o unirse a salas.");
+        listoParaUnirse = true;
+    }
+
+    public void CrearCampaña(string codigo)
+    {
+        if (!listoParaUnirse)
+        {
+            Debug.LogWarning("⏳ Esperando conexión al lobby para crear campaña...");
+            return;
+        }
+
+        RoomOptions opciones = new RoomOptions { MaxPlayers = 4 };
+        PhotonNetwork.CreateRoom(codigo, opciones, TypedLobby.Default);
+        Debug.Log("🏗️ Creando sala con código: " + codigo);
+    }
+
+    public void UnirseACampaña(string codigo)
+    {
+        if (!listoParaUnirse)
+        {
+            Debug.LogWarning("⏳ Aún no conectado al lobby. Espera un momento...");
+            return;
+        }
+
+        PhotonNetwork.JoinRoom(codigo);
+        Debug.Log("🔑 Intentando unirse a la sala con código: " + codigo);
     }
 
     public override void OnJoinedRoom()
     {
-        if (PhotonNetwork.CurrentRoom == null)
+        Debug.Log($"✅ {PhotonNetwork.LocalPlayer.NickName} se unió a la sala: {PhotonNetwork.CurrentRoom.Name}");
+
+        var view = GetComponent<PhotonView>();
+        if (view == null)
         {
-            Debug.LogError("❌ Error al unirse a la sala.");
+            Debug.LogError("❌ No se encontró un PhotonView en NetworkManager.");
             return;
         }
 
-        Debug.Log($"✅ Jugador {PhotonNetwork.LocalPlayer.NickName} se unió a la sala.");
+        int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
+        string nick = PhotonNetwork.LocalPlayer.NickName;
 
-        // Verificar si este GameObject tiene un PhotonView antes de llamar a un RPC
-        if (GetComponent<PhotonView>() == null)
+        if (!playerNames.ContainsKey(actorNumber))
         {
-            Debug.LogError("❌ No se encontró un PhotonView en NetworkManager. Agrega uno en Unity.");
-            return;
-        }
-
-        if (!playerNames.ContainsKey(PhotonNetwork.LocalPlayer.ActorNumber))
-        {
-            GetComponent<PhotonView>().RPC("SyncPlayerName", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, PhotonNetwork.LocalPlayer.NickName);
+            view.RPC("SyncPlayerName", RpcTarget.AllBuffered, actorNumber, nick);
         }
     }
 
@@ -83,16 +116,21 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     public string GetPlayerName(int actorNumber)
     {
-        if (playerNames.ContainsKey(actorNumber))
-        {
-            return playerNames[actorNumber];
-        }
-        return "Jugador Desconocido";
+        return playerNames.ContainsKey(actorNumber) ? playerNames[actorNumber] : "Jugador Desconocido";
+    }
+
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Debug.LogError("❌ No se pudo unir a la sala: " + message);
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-        Debug.LogError($"⚠ Desconectado de Photon: {cause}. Intentando reconectar...");
+        Debug.LogError($"⚠️ Desconectado de Photon: {cause}. Reintentando conexión...");
+        listoParaUnirse = false;
+
+        // ✅ Reconexión forzada a región US
+        PhotonNetwork.PhotonServerSettings.AppSettings.FixedRegion = "us";
         PhotonNetwork.ConnectUsingSettings();
     }
 }

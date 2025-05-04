@@ -1,0 +1,23 @@
+<linker>
+	<assembly fullname="Assembly-CSharp" ignoreIfMissing="1">
+		<type fullname="LobbyManager">
+			<method name="SelectArcher"/>
+			<method name="SelectWarrior"/>
+			<method name="SelectWitcher"/>
+			<method name="StartMultiplayerGame"/>
+		</type>
+		<type fullname="MainMenuManager">
+			<method name="OnPlayBossFinal"/>
+		</type>
+		<type fullname="SphinxQuestionManager">
+			<method name="OnFalsePressed"/>
+			<method name="OnTruePressed"/>
+		</type>
+		<type fullname="TurnBasedGame">
+			<method name="Attack"/>
+			<method name="Attack"/>
+			<method name="Defend"/>
+			<method name="Defend"/>
+		</type>
+	</assembly>
+</linker>
