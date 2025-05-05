@@ -32,13 +32,12 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        // Puedes asignar los botones en el Inspector en lugar de hacerlo aquí
         startGameButton.interactable = PhotonNetwork.IsMasterClient;
     }
 
-    public void SelectWarrior() { SelectRole("Guerrero"); }
-    public void SelectWitcher() { SelectRole("Hechicero"); }
-    public void SelectArcher() { SelectRole("Arquero"); }
+    public void SelectWarrior()  { SelectRole("Guerrero"); }
+    public void SelectWitcher()  { SelectRole("Hechicero"); }
+    public void SelectArcher()   { SelectRole("Arquero"); }
     public void StartMultiplayerGame() { StartGame(); }
 
     private void SelectRole(string role)
@@ -85,8 +84,19 @@ public class LobbyManager : MonoBehaviourPunCallbacks
 
         if (propertiesThatChanged.ContainsKey(GAME_STARTED_KEY))
         {
-            Debug.Log("🎲 ¡El juego ha comenzado!");
-            PhotonNetwork.LoadLevel("multplayertest02");
+            GameMode modo = GameMode.Dragon; // por defecto
+
+            if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("GameMode"))
+            {
+                modo = (GameMode)(int)PhotonNetwork.CurrentRoom.CustomProperties["GameMode"];
+            }
+
+            string escenaFinal = modo == GameMode.FinalBoss
+                ? "FinalBoss"
+                : "multplayertest02";
+
+            Debug.Log("🎲 ¡El juego ha comenzado! Cargando escena: " + escenaFinal);
+            PhotonNetwork.LoadLevel(escenaFinal);
         }
     }
 
@@ -106,10 +116,14 @@ public class LobbyManager : MonoBehaviourPunCallbacks
             return;
         }
 
+        GameMode modoElegido = MatchSettings.Instance.mode;
+
         Hashtable gameStartData = new Hashtable
         {
-            [GAME_STARTED_KEY] = true
+            [GAME_STARTED_KEY] = true,
+            ["GameMode"] = (int)modoElegido
         };
+
         PhotonNetwork.CurrentRoom.SetCustomProperties(gameStartData);
     }
 
