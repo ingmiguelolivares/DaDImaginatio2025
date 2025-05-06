@@ -13,53 +13,62 @@ MonoBehaviour:
   m_Name: SphinxQuestionBank
   m_EditorClassIdentifier: Assembly-CSharp::SphinxQuestionBank
   questions:
-  - question: 1
+  - question: "1. \xBFLa Garza real puede quedarse inm\xF3vil durante largos periodos
+      para atrapar a sus presas?\n"
     answer: 1
-  - question: 2
+  - question: "2. \xBFEl B\xFAho listado es m\xE1s activo al amanecer y al anochecer?\n"
+    answer: 1
+  - question: "3. \xBFLa Garcita rayada suele quedarse inm\xF3vil mientras espera
+      a sus presas?\n"
+    answer: 1
+  - question: "4. \xBFEl Chorlito grit\xF3n defiende su nido actuando como si tuviera
+      un ala rota?\n"
+    answer: 1
+  - question: "5. \xBFEl Chulo tiene un sentido del olfato muy bien desarrollado?\n"
+    answer: 1
+  - question: "6. \xBFEl Carpintero ahumado forrajea solo en pareja o en grupos familiares?\n"
     answer: 0
-  - question: 3
+  - question: "7. \xBFEl Gavil\xE1n maromero caza principalmente al atardecer?\n"
     answer: 1
-  - question: 4
+  - question: "8. \xBFEl Periquito de anteojos emite diversos sonidos para comunicarse?\n"
+    answer: 1
+  - question: "9. \xBFLa Focha americana bucea para alimentarse de plantas acu\xE1ticas?\n"
+    answer: 1
+  - question: "10. \xBFEl Alcarav\xE1n emite llamadas ruidosas cuando detecta peligro?\n"
     answer: 0
-  - question: 5
-    answer: 1
-  - question: 6
+  - question: "11. \xBFEl Sinsonte tiene la capacidad de imitar el canto de otras
+      aves?\n"
     answer: 0
-  - question: 7
-    answer: 1
-  - question: 8
+  - question: "12. \xBFEl Guaco se refugia en grupos para dormir?\n"
     answer: 0
-  - question: 9
-    answer: 1
-  - question: 10
+  - question: "13. \xBFEl Pato pico azul hace su nido cerca del agua, entre plantas
+      acu\xE1ticas?\n"
     answer: 0
-  - question: 11
-    answer: 1
-  - question: 12
+  - question: "14. \xBFEl Cormor\xE1n se zambulle para cazar peces bajo el agua?\n"
     answer: 0
-  - question: 13
-    answer: 1
-  - question: 14
+  - question: "15. \xBFEl \xC1guila pescadora puede sumergirse para atrapar peces
+      con sus garras?\n"
     answer: 0
-  - question: 15
-    answer: 1
-  - question: 16
+  - question: "16. \xBFLa Garza silbadora emite un sonido caracter\xEDstico cuando
+      se siente perturbada?\n"
     answer: 0
-  - question: 17
-    answer: 1
-  - question: 18
+  - question: "17. \xBFLa Mirla patinaranja tiene un canto fuerte y melodioso?\n"
     answer: 0
-  - question: 19
-    answer: 1
-  - question: 20
+  - question: "18. \xBFEl Copet\xF3n est\xE1 adaptado para convivir en zonas con
+      actividad humana?\n"
     answer: 0
-  - question: 21
+  - question: "19. \xBFLa Tingua pico verde tiene alas cortas y no puede sostener
+      un vuelo prolongado?\n"
     answer: 1
-  - question: 22
+  - question: "20. \xBFEl Chirlobirlo tiene cantos variados y melodiosos?\n"
     answer: 0
-  - question: 23
+  - question: "21. \xBFLa Garza real habita en humedales, ci\xE9nagas y manglares?\n"
     answer: 1
-  - question: 24
+  - question: "22. \xBFEl B\xFAho listado habita en zonas boscosas y sabanas?\n"
     answer: 0
-  - question: 25
+  - question: "23. \xBFLa Garcita rayada habita en humedales y manglares?\n"
     answer: 1
+  - question: "24. \xBFEl Chorlito grit\xF3n habita en pastizales y humedales?\n"
+    answer: 1
+  - question: "25. \xBFEl Sinsonte habita en zonas arboladas y abiertas?\n"
+    answer: 0
