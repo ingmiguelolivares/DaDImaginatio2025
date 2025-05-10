@@ -4,26 +4,23 @@ using UnityEngine.SceneManagement;
 public class EventManager : MonoBehaviour
 {
     public int MaxDistance = 35;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    public void Start()
     {
-        
+        // Puede tener lógica aquí si es necesario.
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Update()
     {
-        
+        // Se puede usar para lógica de frame si es necesario.
     }
+
     public void ActivateEvent(int eventID)
     {
-        if(eventID ==1)//Calabozo 1
-        {
-            SceneManager.LoadScene("Calabozo1");
-        }
-        else if (eventID == 2) //Calabozo 2
-        {
-            SceneManager.LoadScene("Calabozo2");
-        }
+        // Guardar el ID del evento en PlayerPrefs
+        PlayerPrefs.SetInt("EventID", eventID); // Guarda el ID para usarlo en el spawneo del modelo
+
+        // Ahora cargamos la escena correspondiente
+        SceneManager.LoadScene("MainMenu"); // Esto carga la escena MainMenu
     }
 }

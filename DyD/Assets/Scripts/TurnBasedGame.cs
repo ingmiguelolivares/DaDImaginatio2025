@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
@@ -196,6 +196,7 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
             LogMessage("🎉 ¡El dragón ha sido derrotado!");
             attackButton.interactable = false;
             defendButton.interactable = false;
+            
         }
     }
 
