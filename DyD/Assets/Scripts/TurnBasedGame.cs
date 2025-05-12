@@ -17,6 +17,12 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 
     public Button attackButton, defendButton;
 
+    // Sliders para cada clase de jugador (Guerrero, Arquero, Mago)
+    public Slider warriorHealthSlider;   // Slider para el Guerrero
+    public Slider archerHealthSlider;    // Slider para el Arquero
+    public Slider mageHealthSlider;      // Slider para el Mago
+    public Slider enemyHealthSlider;     // Slider de vida del enemigo
+
     private List<Player> players = new List<Player>();
     private int currentTurnIndex = 0;
 
@@ -56,16 +62,32 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 
     IEnumerator WaitForPlayersToSync()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(2.0f); // Esperar a que los jugadores se sincronicen
         players.AddRange(PhotonNetwork.PlayerList);
 
+        // Recupera los roles de cada jugador desde las propiedades de la sala
         foreach (var p in players)
         {
             if (string.IsNullOrEmpty(p.NickName))
                 p.NickName = $"Jugador_{p.ActorNumber}";
 
-            AssignPlayerClass(p);
+            string role = GetPlayerRole(p.ActorNumber);  // Recupera el rol del jugador
+            AssignPlayerClass(p, role);
             playerHealths[p.ActorNumber] = GetPlayerHealth(playerClasses[p.ActorNumber]);
+
+            // Asigna el slider adecuado a cada clase de jugador
+            if (playerClasses[p.ActorNumber] == "Guerrero")
+            {
+                warriorHealthSlider.value = playerHealths[p.ActorNumber];
+            }
+            else if (playerClasses[p.ActorNumber] == "Arquero")
+            {
+                archerHealthSlider.value = playerHealths[p.ActorNumber];
+            }
+            else if (playerClasses[p.ActorNumber] == "Mago")
+            {
+                mageHealthSlider.value = playerHealths[p.ActorNumber];
+            }
 
             LogMessage($"✅ {p.NickName} es un {playerClasses[p.ActorNumber]} con {playerHealths[p.ActorNumber]} HP.");
         }
@@ -74,16 +96,19 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
             ChooseRandomStartingPlayer();
     }
 
-    void AssignPlayerClass(Player player)
+    // Función para obtener el rol desde las propiedades de la sala
+    string GetPlayerRole(int actorNumber)
     {
-        int i = players.IndexOf(player);
-        playerClasses[player.ActorNumber] = i switch
+        if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey($"Role_{actorNumber}"))
         {
-            0 => "Guerrero",
-            1 => "Arquero",
-            2 => "Mago",
-            _ => "Desconocido"
-        };
+            return (string)PhotonNetwork.CurrentRoom.CustomProperties[$"Role_{actorNumber}"];
+        }
+        return "Desconocido";  // Si no se ha asignado un rol, se pone "Desconocido"
+    }
+
+    void AssignPlayerClass(Player player, string role)
+    {
+        playerClasses[player.ActorNumber] = role;  // Asigna el rol correctamente
     }
 
     int GetPlayerHealth(string playerClass) => playerClass switch
@@ -126,10 +151,29 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
         string msg = $"🌀 Turno de {currentPlayer.NickName}\nDragón: {enemyHealth} HP\n❤️ {GetPlayersHealth()}";
         LogMessage(msg);
 
-        if (SceneManager.GetActiveScene().name == "FinalBoss" && questionLogText != null) {
+        // Actualiza el slider de vida del enemigo
+        enemyHealthSlider.value = enemyHealth;
+
+        // Actualiza el slider correspondiente del jugador actual según su clase
+        if (playerClasses[currentPlayer.ActorNumber] == "Guerrero")
+        {
+            warriorHealthSlider.value = playerHealths[currentPlayer.ActorNumber];
+        }
+        else if (playerClasses[currentPlayer.ActorNumber] == "Arquero")
+        {
+            archerHealthSlider.value = playerHealths[currentPlayer.ActorNumber];
+        }
+        else if (playerClasses[currentPlayer.ActorNumber] == "Mago")
+        {
+            mageHealthSlider.value = playerHealths[currentPlayer.ActorNumber];
+        }
+
+        if (SceneManager.GetActiveScene().name == "FinalBoss" && questionLogText != null)
+        {
             questionLogText.text = "Preparando las preguntas";
         }
-         // Si estamos en FinalBoss, iniciar la fase de preguntas
+
+        // Si estamos en FinalBoss, iniciar la fase de preguntas
         if (SceneManager.GetActiveScene().name == "FinalBoss")
         {
             var sphinx = FindObjectOfType<SphinxQuestionManager>();
@@ -142,7 +186,6 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
                 Debug.LogWarning("⚠️ No se encontró el SphinxQuestionManager en escena.");
             }
         }
-   
     }
 
     public void ResolveAnswer(int actorNumber, bool success)
@@ -191,12 +234,14 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 
         LogMessage($"💥 El enemigo recibió {damage} de daño. HP restante: {enemyHealth}");
 
+        // Actualiza el slider de vida del enemigo
+        enemyHealthSlider.value = enemyHealth;
+
         if (enemyHealth <= 0)
         {
             LogMessage("🎉 ¡El dragón ha sido derrotado!");
             attackButton.interactable = false;
             defendButton.interactable = false;
-            
         }
     }
 
@@ -217,6 +262,20 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
 
         LogMessage($"🐉 El dragón ataca a {players[next].NickName} y le causa 30 de daño.\n❤️ {GetPlayersHealth()}");
 
+        // Actualiza el slider correspondiente al jugador atacado
+        if (playerClasses[players[next].ActorNumber] == "Guerrero")
+        {
+            warriorHealthSlider.value = playerHealths[actor];
+        }
+        else if (playerClasses[players[next].ActorNumber] == "Arquero")
+        {
+            archerHealthSlider.value = playerHealths[actor];
+        }
+        else if (playerClasses[players[next].ActorNumber] == "Mago")
+        {
+            mageHealthSlider.value = playerHealths[actor];
+        }
+
         if (playerHealths[actor] <= 0)
             LogMessage($"💀 {players[next].NickName} ha sido derrotado.");
     }
@@ -232,7 +291,9 @@ public class TurnBasedGame : MonoBehaviourPunCallbacks
     {
         string result = "";
         foreach (var p in players)
+        {
             result += $"{p.NickName}: {playerHealths[p.ActorNumber]} HP\n";
+        }
         return result;
     }
 
