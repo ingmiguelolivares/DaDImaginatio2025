@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using Photon.Pun;
 using Photon.Realtime;
 
-/// Administra la pantalla principal: crear sala, unirse y elegir modo de juego.
 public class MainMenuManager : MonoBehaviourPunCallbacks
 {
     /* ---------- Referencias UI ---------- */
@@ -17,15 +16,14 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
     public Text txtRoomCode;
     public Text txtEstado;
 
-    /* ---------- Inicialización ---------- */
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.AutomaticallySyncScene = true; // ✅ importante para sincronizar escena Lobby y combate
 
         btnCrearCampaña.onClick.AddListener(OnPlayDragon);
-        btnBossFinal   .onClick.AddListener(OnPlayBossFinal);
-        btnUnirse      .onClick.AddListener(UnirseACampaña);
+        btnBossFinal.onClick.AddListener(OnPlayBossFinal);
+        btnUnirse.onClick.AddListener(UnirseACampaña);
 
         txtRoomCode.gameObject.SetActive(false);
         txtEstado.text = "🔌 Conectando a Photon...";
@@ -37,14 +35,14 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
     }
 
     /* ---------- Métodos públicos (Inspector / OnClick) ---------- */
-    public void OnPlayDragon()     => CrearCampaña(GameMode.Dragon);
-    public void OnPlayBossFinal()  => CrearCampaña(GameMode.FinalBoss); // ✅ este ya guarda el modo FinalBoss
+    public void OnPlayDragon() => CrearCampaña(GameMode.Dragon);
+    public void OnPlayBossFinal() => CrearCampaña(GameMode.FinalBoss);
 
     /* ---------- Crear / Unirse ---------- */
 
     void CrearCampaña(GameMode mode)
     {
-        // ✅ Guardamos el modo elegido para que el Lobby lo lea después
+        // Guardamos el modo elegido para que el Lobby lo lea después
         MatchSettings.Instance.mode = mode;
 
         string roomID = Random.Range(10000, 99999).ToString();
@@ -85,14 +83,13 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        txtEstado.text =
-            $"👤 {newPlayer.NickName} se unió ({PhotonNetwork.CurrentRoom.PlayerCount}/3)";
+        txtEstado.text = $"👤 {newPlayer.NickName} se unió ({PhotonNetwork.CurrentRoom.PlayerCount}/3)";
         CheckStart();
     }
 
     void CheckStart()
     {
-        // ✅ Cuando hay 3 jugadores y soy MasterClient, cargo el Lobby
+        // Cuando hay 3 jugadores y soy MasterClient, cargo el Lobby
         if (PhotonNetwork.CurrentRoom.PlayerCount == 3 && PhotonNetwork.IsMasterClient)
         {
             txtEstado.text = "🚀 Cargando Lobby…";
@@ -110,5 +107,12 @@ public class MainMenuManager : MonoBehaviourPunCallbacks
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         txtEstado.text = $"❌ Error al crear sala: {message}";
+    }
+
+    /* ---------- Método para cargar el modelo de acuerdo al eventID ---------- */
+    public void LoadModelBasedOnEvent()
+    {
+        int eventID = PlayerPrefs.GetInt("EventID");
+        ModelsLoader.Instance.LoadRandomModel();  // Llamamos al método de spawneo en ModelsLoader con el eventID
     }
 }
